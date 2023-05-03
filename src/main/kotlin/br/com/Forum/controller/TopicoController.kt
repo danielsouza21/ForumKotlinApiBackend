@@ -1,14 +1,14 @@
 package br.com.Forum.controller
 
-import br.com.Forum.dto.TopicoFormDto
+import br.com.Forum.dto.AtualizacaoTopicoFormDto
+import br.com.Forum.dto.IncluirTopicoFormDto
 import br.com.Forum.dto.TopicoViewDto
 import br.com.Forum.services.TopicoService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
 @RestController
@@ -26,7 +26,35 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PostMapping
-    fun Cadastrar(@RequestBody topicoDto: TopicoFormDto) {
-        service.cadastrar(topicoDto);
+    //Validação do body com @Valid do BeanValidation
+    fun Cadastrar(
+        @RequestBody @Valid topicoDto: IncluirTopicoFormDto,
+        uriBuilder: UriComponentsBuilder
+    ): ResponseEntity<TopicoViewDto?> {
+        val topicoView = service.cadastrar(topicoDto)
+
+        if(topicoView != null){
+            /* O objeto topicoView é verificado para não ser nulo.
+            Se não for nulo, uma nova resposta HTTP é criada com o status 201 Created
+            e o objeto topicoView como corpo da resposta. A URI do novo tópico criado
+            é adicionada ao cabeçalho da resposta (key: "Location"). */
+
+            val uri = uriBuilder.path("/topicos/${topicoView.id}").build().toUri();
+            return ResponseEntity.created(uri).body(topicoView);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping
+    fun atualizar(@RequestBody @Valid topicoDto: AtualizacaoTopicoFormDto): ResponseEntity<TopicoViewDto?> {
+        val topicoView = service.atualizar(topicoDto)
+        return ResponseEntity.ok(topicoView)
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deletar(@PathVariable id: Long) {
+        service.deletar(id)
     }
 }
