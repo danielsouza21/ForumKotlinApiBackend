@@ -3,12 +3,16 @@ Projeto de estudos sobre a linguaguem Kotlin aplicado a API REST Backend, desenv
 
 ## Tópicos aplicados e implementados:
 * CRUD com API REST utilizando controllers 
-* Conceitos de DependencyInjection com atributos @Service e @Component
+* Conceitos de DependencyInjection com atributos `@Service` e `@Component`
 * DataTransferObject (DTOs) para criação de contratos nos controller
-* Validadores de modelos (@BeanValidator)
+* Validadores de modelos (`@BeanValidator`)
 * Tratamento de erros com middlewares
 * Utilização de JPA para persistência
+  * Banco de dados H2 (`http://localhost:8099/h2-console`)
 * InterfaceRepository Pattern
 * Migrations com Flyway
 * Utilização de Cache (Redis)
 * Paginação, ordenação e projections em queries
+
+### Observações:
+* URI: `http://localhost:8099`

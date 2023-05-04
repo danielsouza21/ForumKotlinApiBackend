@@ -4,6 +4,8 @@ import br.com.Forum.dto.AtualizacaoTopicoFormDto
 import br.com.Forum.dto.IncluirTopicoFormDto
 import br.com.Forum.dto.TopicoViewDto
 import br.com.Forum.services.TopicoService
+import io.swagger.annotations.ApiOperation
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,9 +28,9 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PostMapping
-    //Validação do body com @Valid do BeanValidation
+    @Transactional //Abrir transação e commitar automaticamente as queries no db
     fun Cadastrar(
-        @RequestBody @Valid topicoDto: IncluirTopicoFormDto,
+        @RequestBody @Valid topicoDto: IncluirTopicoFormDto, //Validação do body com @Valid do BeanValidation
         uriBuilder: UriComponentsBuilder
     ): ResponseEntity<TopicoViewDto?> {
         val topicoView = service.cadastrar(topicoDto)
@@ -47,12 +49,14 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PutMapping
+    @Transactional
     fun atualizar(@RequestBody @Valid topicoDto: AtualizacaoTopicoFormDto): ResponseEntity<TopicoViewDto?> {
         val topicoView = service.atualizar(topicoDto)
         return ResponseEntity.ok(topicoView)
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletar(@PathVariable id: Long) {
         service.deletar(id)
