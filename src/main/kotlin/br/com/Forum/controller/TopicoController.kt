@@ -7,6 +7,9 @@ import br.com.Forum.services.TopicoService
 import io.swagger.annotations.ApiOperation
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -18,8 +21,11 @@ import java.util.*
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
-    fun Listar(): List<TopicoViewDto> {
-        return service.Listar();
+    fun Listar(
+            @RequestParam(required = false) nomeCurso: String?,
+            @PageableDefault(size = 3) paginacao: Pageable
+    ): Page<TopicoViewDto> {
+        return service.Listar(nomeCurso, paginacao);
     }
 
     @GetMapping("/{id}")

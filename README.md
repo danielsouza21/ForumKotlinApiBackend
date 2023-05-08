@@ -13,6 +13,7 @@ Projeto de estudos sobre a linguaguem Kotlin aplicado a API REST Backend, desenv
 * Migrations com Flyway
 * Utilização de Cache (Redis)
 * Paginação, ordenação e projections em queries
+  * Exemplo:`http://localhost:8099/topicos?nomeCurso=Kotlin&size=3&page=1&sort=id,desc`
 
 ### Observações:
 * URI: `http://localhost:8099`
