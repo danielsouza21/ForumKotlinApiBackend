@@ -11,7 +11,7 @@ Projeto de estudos sobre a linguaguem Kotlin aplicado a API REST Backend, desenv
   * Banco de dados H2 (`http://localhost:8099/h2-console`)
 * InterfaceRepository Pattern
 * Migrations com Flyway
-* Utilização de Cache (Redis)
+* Utilização de Cache (em memória, com spring)
 * Paginação, ordenação e projections em queries
   * Exemplo:`http://localhost:8099/topicos?nomeCurso=Kotlin&size=3&page=1&sort=id,desc`
 

@@ -2,11 +2,14 @@ package br.com.Forum.controller
 
 import br.com.Forum.dto.AtualizacaoTopicoFormDto
 import br.com.Forum.dto.IncluirTopicoFormDto
+import br.com.Forum.dto.TopicoPorCategoriaDto
 import br.com.Forum.dto.TopicoViewDto
 import br.com.Forum.services.TopicoService
 import io.swagger.annotations.ApiOperation
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -21,6 +24,7 @@ import java.util.*
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
+    @Cacheable("topicos-lista")
     fun Listar(
             @RequestParam(required = false) nomeCurso: String?,
             @PageableDefault(size = 3) paginacao: Pageable
@@ -35,6 +39,7 @@ class TopicoController(private val service: TopicoService) {
 
     @PostMapping
     @Transactional //Abrir transação e commitar automaticamente as queries no db
+    @CacheEvict(value = ["topicos-lista"], allEntries = true) //Renova cache especifico de listagem
     fun Cadastrar(
         @RequestBody @Valid topicoDto: IncluirTopicoFormDto, //Validação do body com @Valid do BeanValidation
         uriBuilder: UriComponentsBuilder
@@ -56,6 +61,7 @@ class TopicoController(private val service: TopicoService) {
 
     @PutMapping
     @Transactional
+    @CacheEvict(value = ["topicos-lista"], allEntries = true)
     fun atualizar(@RequestBody @Valid topicoDto: AtualizacaoTopicoFormDto): ResponseEntity<TopicoViewDto?> {
         val topicoView = service.atualizar(topicoDto)
         return ResponseEntity.ok(topicoView)
@@ -63,8 +69,14 @@ class TopicoController(private val service: TopicoService) {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @CacheEvict(value = ["topicos-lista"], allEntries = true)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletar(@PathVariable id: Long) {
         service.deletar(id)
+    }
+
+    @GetMapping("/relatorio-cursos")
+    fun relatorio(): List<TopicoPorCategoriaDto> {
+        return service.relatorio()
     }
 }
